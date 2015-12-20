@@ -99,8 +99,9 @@ namespace Cortana.Launch
                             pageToNavigate = typeof(SeriesPage);
                             break;
 
-                        case "launchHomeland":
+                        case "launchSerie":
                             pageToNavigate = typeof(SeriePage);
+                            string param = voiceCommandArgs.Result.Sem.Properties["destination"][0];
                             param = "homeland";
                             break;
                     }

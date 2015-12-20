@@ -11,12 +11,18 @@
       <Navigate Target="SeriePage.xaml"/>
     </Command>
 
-    <Command Name="launchHomeland">
+    <Command Name="launchSerie">
       <Example> affiche la série homeland </Example>
-      <ListenFor> affiche la série homeland </ListenFor>
+      <ListenFor> affiche la série {serie} </ListenFor>
       <Feedback> Affichage de la série Homeland </Feedback>
-      <Navigate Target="SeriesPage.xaml"/>
+      <Navigate />
     </Command>
+
+    <PhraseList Label="serie">
+      <Item> Homeland </Item>
+      <Item> Jessica Jones </Item>
+    </PhraseList>
+
 
   </CommandSet>
 </VoiceCommands>
