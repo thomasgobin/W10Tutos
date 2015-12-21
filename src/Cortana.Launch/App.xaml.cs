@@ -40,7 +40,7 @@ namespace Cortana.Launch
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 
 #if DEBUG
@@ -80,7 +80,8 @@ namespace Cortana.Launch
             // Ensure the current window is active
             Window.Current.Activate();
 
-            CortanaHelper.RegisterVCD();
+            await CortanaHelper.RegisterVCD();
+            await CortanaHelper.EditSeries();
         }
 
         protected override void OnActivated(IActivatedEventArgs args)
@@ -101,8 +102,7 @@ namespace Cortana.Launch
 
                         case "launchSerie":
                             pageToNavigate = typeof(SeriePage);
-                            string param = voiceCommandArgs.Result.Sem.Properties["destination"][0];
-                            param = "homeland";
+                            param = voiceCommandArgs.Result.SemanticInterpretation.Properties["serie"][0];
                             break;
                     }
                 }
