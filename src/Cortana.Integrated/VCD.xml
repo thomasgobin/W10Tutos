@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<VoiceCommands xmlns="http://schemas.microsoft.com/voicecommands/1.1">
+<VoiceCommands xmlns="http://schemas.microsoft.com/voicecommands/1.2">
   <CommandSet xml:lang="fr-fr" Name="CortanaIntegratedCommandSet_fr-fr">
-    <CommandPrefix> Soat, </CommandPrefix>
+    <CommandPrefix> Soat </CommandPrefix>
     <Example> affiche mes séries </Example>
 
     <Command Name="launchSeries">
       <Example> affiche mes séries  </Example>
       <ListenFor> affiche mes séries </ListenFor>
       <Feedback> Affichage de vos séries </Feedback>
-      <VoiceCommandService Target="CortanaVoiceCommandService"/>
+      <VoiceCommandService Target="CortanaVoiceIntegration"/>
     </Command>
 
   </CommandSet>

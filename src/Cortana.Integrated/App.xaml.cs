@@ -79,6 +79,43 @@ namespace Cortana.Integrated
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            CortanaHelper.RegisterVCD();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            Type pageToNavigate = typeof(MainPage);
+            object param = null;
+
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                var commandArgs = args as ProtocolActivatedEventArgs;
+                if(commandArgs != null)
+                {
+                    var decoder = new WwwFormUrlDecoder(commandArgs.Uri.Query);
+                    var launchParam = decoder.GetFirstValueByName("LaunchContext");
+
+                    switch (launchParam)
+                    {
+                        case "launchSeries":
+                            pageToNavigate = typeof(SeriesPage);
+                            break;
+                    }
+                }
+            }
+
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                Window.Current.Content = rootFrame;
+            }
+
+            rootFrame.Navigate(pageToNavigate, param);
+            Window.Current.Activate();
         }
 
         /// <summary>
