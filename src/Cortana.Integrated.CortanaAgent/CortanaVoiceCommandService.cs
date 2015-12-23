@@ -14,6 +14,17 @@ namespace Cortana.Integrated.CortanaAgent
         private BackgroundTaskDeferral serviceDeferral;
         VoiceCommandServiceConnection voiceServiceConnection;
 
+        private Dictionary<string, string> _series;
+        public CortanaVoiceCommandService()
+        {
+            _series = new Dictionary<string, string>();
+            _series.Add("homeland", "Homeland");
+            _series.Add("jessica-jones", "Jessica Jones");
+            _series.Add("breaking-bad", "Breaking Bad");
+            _series.Add("american-dad", "American Dad");
+            _series.Add("game-of-thrones", "Game of Thrones");
+        }
+
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             this.serviceDeferral = taskInstance.GetDeferral();
@@ -35,7 +46,8 @@ namespace Cortana.Integrated.CortanaAgent
 
                     VoiceCommand voiceCommand = await voiceServiceConnection.GetVoiceCommandAsync();
 
-                    await LaunchAppInForeground();
+                    await ShowSeries();
+                    //await LaunchAppInForeground();
                 }
                 catch (Exception ex)
                 { }
@@ -44,6 +56,39 @@ namespace Cortana.Integrated.CortanaAgent
                     this.serviceDeferral.Complete();
                 }
             }
+        }
+
+        private async Task ShowSeries()
+        {
+            //Création d'un message de réponse temporaire permettant de ne plus couper la tâche au bout de XX secondes par défaut
+            var userProgressMessage = new VoiceCommandUserMessage();
+            userProgressMessage.DisplayMessage = userProgressMessage.SpokenMessage = "Nous récupérons vos séries";
+
+            VoiceCommandResponse response_temp = VoiceCommandResponse.CreateResponse(userProgressMessage);
+            await voiceServiceConnection.ReportProgressAsync(response_temp);
+
+            //Création de la liste de résultats à afficher par Cortana
+            var destinationsContentTiles = new List<VoiceCommandContentTile>();
+
+            //Création d'une tuile pour chaque série
+            foreach (var serie in _series)
+            {
+                var tile = new VoiceCommandContentTile();
+                tile.ContentTileType = VoiceCommandContentTileType.TitleOnly;
+                tile.AppLaunchArgument = serie.Key;
+                tile.Title = serie.Value;
+
+                destinationsContentTiles.Add(tile);
+            }
+
+
+            //Message de résultat
+            var userReprompt = new VoiceCommandUserMessage();
+            userReprompt.DisplayMessage = "Vos séries";
+            userReprompt.SpokenMessage = "Voici vos séries";
+
+            var response = VoiceCommandResponse.CreateResponse(userReprompt, destinationsContentTiles);
+            await voiceServiceConnection.ReportSuccessAsync(response);
         }
 
         private async Task LaunchAppInForeground()
