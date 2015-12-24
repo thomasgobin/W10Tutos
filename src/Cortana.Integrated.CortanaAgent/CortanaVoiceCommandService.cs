@@ -75,7 +75,7 @@ namespace Cortana.Integrated.CortanaAgent
             {
                 var tile = new VoiceCommandContentTile();
                 tile.ContentTileType = VoiceCommandContentTileType.TitleOnly;
-                tile.AppLaunchArgument = serie.Key;
+                tile.AppLaunchArgument = "serie-"+serie.Key;
                 tile.Title = serie.Value;
 
                 destinationsContentTiles.Add(tile);

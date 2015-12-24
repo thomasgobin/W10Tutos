@@ -96,11 +96,13 @@ namespace Cortana.Integrated
                     var decoder = new WwwFormUrlDecoder(commandArgs.Uri.Query);
                     var launchParam = decoder.GetFirstValueByName("LaunchContext");
 
-                    switch (launchParam)
+                    if (launchParam.StartsWith("serie-"))
                     {
-                        case "launchSeries":
-                            pageToNavigate = typeof(SeriesPage);
-                            break;
+                        pageToNavigate = typeof(SeriePage);
+                        param = launchParam.Remove(0, 6);
+                    }
+                    else {
+                        pageToNavigate = typeof(SeriesPage);
                     }
                 }
             }
