@@ -11,5 +11,21 @@
       <VoiceCommandService Target="CortanaVoiceIntegration"/>
     </Command>
 
+    <Command Name="launchSerie">
+      <Example> affiche la série homeland </Example>
+      <ListenFor> affiche la série {serie} </ListenFor>
+      <Feedback> Affichage de la série Homeland </Feedback>
+      <VoiceCommandService Target="CortanaVoiceIntegration"/>
+    </Command>
+
+    <PhraseList Label="serie">
+      <Item> Homeland </Item>
+      <Item> Jessica Jones </Item>
+      <Item> Breaking Bad </Item>
+      <Item> American Dad </Item>
+      <Item> Heroes </Item>
+      <Item> Heroes Reborn </Item>
+    </PhraseList>
+    
   </CommandSet>
 </VoiceCommands>

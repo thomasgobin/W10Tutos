@@ -22,7 +22,8 @@ namespace Cortana.Integrated.CortanaAgent
             _series.Add("jessica-jones", "Jessica Jones");
             _series.Add("breaking-bad", "Breaking Bad");
             _series.Add("american-dad", "American Dad");
-            _series.Add("game-of-thrones", "Game of Thrones");
+            _series.Add("heroes", "Heroes");
+            _series.Add("heroes-reborn", "Heroes Reborn");
         }
 
         public async void Run(IBackgroundTaskInstance taskInstance)
@@ -46,8 +47,16 @@ namespace Cortana.Integrated.CortanaAgent
 
                     VoiceCommand voiceCommand = await voiceServiceConnection.GetVoiceCommandAsync();
 
-                    await ShowSeries();
-                    //await LaunchAppInForeground();
+                    switch (voiceCommand.CommandName)
+                    {
+                        case "launchSeries":
+                            await ShowSeries();
+                            break;
+
+                        case "launchSerie":
+                            await ShowSerie(voiceCommand);
+                            break;
+                    }
                 }
                 catch (Exception ex)
                 { }
@@ -89,6 +98,18 @@ namespace Cortana.Integrated.CortanaAgent
 
             var response = VoiceCommandResponse.CreateResponse(userReprompt, destinationsContentTiles);
             await voiceServiceConnection.ReportSuccessAsync(response);
+        }
+
+        private async Task ShowSerie(VoiceCommand command)
+        {
+            var userMessage = new VoiceCommandUserMessage();
+            userMessage.SpokenMessage = "Lancement de l'application";
+
+            var response = VoiceCommandResponse.CreateResponse(userMessage);
+
+            response.AppLaunchArgument = "LaunchSeries";
+
+            await voiceServiceConnection.RequestAppLaunchAsync(response);
         }
 
         private async Task LaunchAppInForeground()
