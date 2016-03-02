@@ -102,14 +102,55 @@ namespace Cortana.Integrated.CortanaAgent
 
         private async Task ShowSerie(VoiceCommand command)
         {
-            var userMessage = new VoiceCommandUserMessage();
-            userMessage.SpokenMessage = "Lancement de l'application";
+            string serie = "Heroes";
 
-            var response = VoiceCommandResponse.CreateResponse(userMessage);
+            var selectedSeries = _series.Where(x => x.Value.Contains(serie));
 
-            response.AppLaunchArgument = "LaunchSeries";
+            if (selectedSeries.Count() == 1)
+            {
+                //Lancement de la série si aucune correspondance
+                var userMessage = new VoiceCommandUserMessage();
+                userMessage.SpokenMessage = "Lancement de l'application";
 
-            await voiceServiceConnection.RequestAppLaunchAsync(response);
+                var response = VoiceCommandResponse.CreateResponse(userMessage);
+
+                response.AppLaunchArgument = "serie-"+selectedSeries.First().Key;
+
+                await voiceServiceConnection.RequestAppLaunchAsync(response);
+            }
+            else if (selectedSeries.Count() > 1)
+            {
+                //Levée d'ambigüité
+                //Création de la liste de résultats à afficher par Cortana
+                var destinationsContentTiles = new List<VoiceCommandContentTile>();
+
+                //Création d'une tuile pour chaque série
+                foreach (var tempSerie in selectedSeries)
+                {
+                    var tile = new VoiceCommandContentTile();
+                    tile.ContentTileType = VoiceCommandContentTileType.TitleOnly;
+                    tile.AppLaunchArgument = "serie-" + tempSerie.Key;
+                    tile.Title = tempSerie.Value;
+
+                    destinationsContentTiles.Add(tile);
+                }
+
+                var userReprompt = new VoiceCommandUserMessage();
+                userReprompt.DisplayMessage = "Quelle série voulez-vous afficher?";
+                userReprompt.SpokenMessage = "Quelle série voulez-vous afficher?";
+
+                // Create the disambiguation response.
+                var response =
+                  VoiceCommandResponse.CreateResponseForPrompt(
+                    userReprompt, userReprompt, destinationsContentTiles);
+
+                await voiceServiceConnection.RequestDisambiguationAsync(response);
+            }
+            else
+            {
+                //Message d'erreur
+            }
+            
         }
 
         private async Task LaunchAppInForeground()
